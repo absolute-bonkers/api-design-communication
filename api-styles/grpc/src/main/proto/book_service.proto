@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package apidesign.books.v1;
+
+option java_package = "com.absolutebonkers.apidesign.grpc.v1";
+option java_multiple_files = true;
+option java_outer_classname = "BookServiceProtocol";
+
+service BookService {
+  rpc GetBook(GetBookRequest) returns (Book);
+}
+
+message GetBookRequest {
+  int64 id = 1;
+}
+
+message Book {
+  int64 id = 1;
+  string title = 2;
+  string author = 3;
+}

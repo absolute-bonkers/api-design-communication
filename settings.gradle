@@ -1,0 +1,12 @@
+rootProject.name = 'api-design-communication'
+
+include 'api-styles:rest'
+include 'api-styles:graphql'
+include 'api-styles:grpc'
+include 'api-styles:websockets'
+include 'api-lifecycle:versioning'
+include 'api-lifecycle:idempotency'
+include 'api-lifecycle:pagination'
+include 'api-lifecycle:hateoas'
+include 'gateway-traffic:api-gateway'
+include 'gateway-traffic:rate-limiting'

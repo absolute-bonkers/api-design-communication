@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'com.graphql-java:graphql-java:22.3'
+}
