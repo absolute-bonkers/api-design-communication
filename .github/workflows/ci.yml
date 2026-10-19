@@ -1,0 +1,13 @@
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: absolute-bonkers/.github/.github/workflows/gradle-ci.yml@main
