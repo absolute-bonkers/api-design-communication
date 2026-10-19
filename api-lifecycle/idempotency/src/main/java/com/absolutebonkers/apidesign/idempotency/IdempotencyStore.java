@@ -102,7 +102,7 @@ public final class IdempotencyStore {
         }
 
         private boolean isExpired(Instant now) {
-            return expiresAt != null && !now.isBefore(expiresAt);
+            return result.isDone() && expiresAt != null && !now.isBefore(expiresAt);
         }
     }
 }

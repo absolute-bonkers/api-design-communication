@@ -4,7 +4,9 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,8 @@ public final class ApiVersionNegotiator {
             "^application/vnd\\.absolute-bonkers\\.orders\\.v([0-9]+)\\+json$",
             Pattern.CASE_INSENSITIVE);
     private static final Instant V1_SUNSET = Instant.parse("2027-01-01T00:00:00Z");
+    private static final DateTimeFormatter HTTP_DATE =
+            DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US).withZone(ZoneOffset.UTC);
 
     public ApiVersion fromPath(String path) {
         if (path == null) {
@@ -39,7 +43,11 @@ public final class ApiVersionNegotiator {
             if (!matcher.matches() || quality <= 0) {
                 continue;
             }
-            ApiVersion candidate = supportedVersion(matcher.group(1));
+            Optional<ApiVersion> supported = findSupportedVersion(matcher.group(1));
+            if (supported.isEmpty()) {
+                continue;
+            }
+            ApiVersion candidate = supported.get();
             if (quality > bestQuality
                     || (quality == bestQuality && (resolved == null || candidate.number() > resolved.number()))) {
                 resolved = candidate;
@@ -58,21 +66,25 @@ public final class ApiVersionNegotiator {
         }
         return Map.of(
                 "Deprecation", "true",
-                "Sunset", DateTimeFormatter.RFC_1123_DATE_TIME.format(V1_SUNSET.atZone(ZoneOffset.UTC)),
+                "Sunset", HTTP_DATE.format(V1_SUNSET),
                 "Link", "</api/v2/orders>; rel=\"successor-version\"");
     }
 
     private static ApiVersion supportedVersion(String value) {
+        return findSupportedVersion(value)
+                .orElseThrow(() -> new ApiVersionException(404, "Unsupported API version v" + value));
+    }
+
+    private static Optional<ApiVersion> findSupportedVersion(String value) {
         int number;
         try {
             number = Integer.parseInt(value);
         } catch (NumberFormatException exception) {
-            throw new ApiVersionException(404, "Unsupported API version");
+            return Optional.empty();
         }
         return Arrays.stream(ApiVersion.values())
                 .filter(version -> version.number() == number)
-                .findFirst()
-                .orElseThrow(() -> new ApiVersionException(404, "Unsupported API version v" + value));
+                .findFirst();
     }
 
     private static double quality(String[] parts) {

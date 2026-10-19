@@ -12,6 +12,8 @@ public final class ApiGateway {
     private static final Set<String> HOP_BY_HOP_HEADERS = Set.of(
             "connection", "keep-alive", "proxy-authenticate", "proxy-authorization",
             "te", "trailer", "transfer-encoding", "upgrade");
+    private static final Set<String> UNTRUSTED_FORWARDING_HEADERS = Set.of(
+            "forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto");
     private final java.util.List<GatewayRoute> routes;
 
     public ApiGateway(java.util.List<GatewayRoute> routes) {
@@ -49,7 +51,8 @@ public final class ApiGateway {
         request.headers().forEach((name, value) -> {
             String normalized = name.toLowerCase(java.util.Locale.ROOT);
             if (!normalized.equals("x-api-key") && !normalized.equals("x-request-id")
-                    && !HOP_BY_HOP_HEADERS.contains(normalized)) {
+                    && !HOP_BY_HOP_HEADERS.contains(normalized)
+                    && !UNTRUSTED_FORWARDING_HEADERS.contains(normalized)) {
                 forwardedHeaders.put(name, value);
             }
         });

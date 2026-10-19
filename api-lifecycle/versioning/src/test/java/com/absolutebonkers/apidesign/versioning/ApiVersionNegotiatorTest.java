@@ -18,7 +18,7 @@ class ApiVersionNegotiatorTest {
     @Test
     void marksDeprecatedVersionsAndLeavesCurrentVersionsUnmarked() {
         assertEquals("true", negotiator.responseHeaders(ApiVersion.V1).get("Deprecation"));
-        assertEquals("Fri, 1 Jan 2027 00:00:00 GMT",
+        assertEquals("Fri, 01 Jan 2027 00:00:00 GMT",
                 negotiator.responseHeaders(ApiVersion.V1).get("Sunset"));
         assertEquals("</api/v2/orders>; rel=\"successor-version\"",
                 negotiator.responseHeaders(ApiVersion.V1).get("Link"));
@@ -33,9 +33,14 @@ class ApiVersionNegotiatorTest {
                 () -> negotiator.fromPath("/api/v3/orders")).statusCode());
         assertEquals(406, assertThrows(ApiVersionException.class,
                 () -> negotiator.fromAccept("application/json")).statusCode());
+        assertEquals(406, assertThrows(ApiVersionException.class,
+                () -> negotiator.fromAccept("application/vnd.absolute-bonkers.orders.v3+json")).statusCode());
         assertEquals(ApiVersion.V2, negotiator.fromAccept(
                 "application/vnd.absolute-bonkers.orders.v1+json, "
                         + "application/vnd.absolute-bonkers.orders.v2+json"));
+        assertEquals(ApiVersion.V2, negotiator.fromAccept(
+                "application/vnd.absolute-bonkers.orders.v3+json, "
+                        + "application/vnd.absolute-bonkers.orders.v2+json;q=0.5"));
     }
 
     @Test

@@ -8,8 +8,8 @@ public record Item(String id, Instant createdAt, String name) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(createdAt);
         Objects.requireNonNull(name);
-        if (!id.matches("[A-Za-z0-9_-]+")) {
-            throw new IllegalArgumentException("Id must contain only letters, digits, '_' or '-'");
+        if (id.length() > 128 || !id.matches("[A-Za-z0-9_-]+")) {
+            throw new IllegalArgumentException("Id must contain 1-128 letters, digits, '_' or '-'");
         }
     }
 }

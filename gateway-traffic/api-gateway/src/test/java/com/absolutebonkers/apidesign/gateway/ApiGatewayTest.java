@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -27,13 +28,15 @@ class ApiGatewayTest {
         ApiResponse response = gateway.handle(new ApiRequest(
                 "GET", "/api/v1/orders/42",
                 Map.of("X-API-KEY", "secret", "X-Request-Id", "client-value",
-                        "Connection", "keep-alive", "Accept", "application/json"), ""));
+                        "Connection", "keep-alive", "Accept", "application/json",
+                        "X-Forwarded-For", "198.51.100.4"), ""));
 
         assertEquals(200, response.status());
         assertEquals("/orders/42", forwarded.get().path());
         assertEquals("application/json", forwarded.get().header("Accept"));
         assertNull(forwarded.get().header("X-Api-Key"));
         assertNull(forwarded.get().header("Connection"));
+        assertNull(forwarded.get().header("X-Forwarded-For"));
         assertNotNull(forwarded.get().header("X-Request-Id"));
         assertNotNull(response.headers().get("X-Request-Id"));
         assertFalse(response.headers().containsKey("Connection"));
@@ -77,5 +80,7 @@ class ApiGatewayTest {
                         new GatewayRoute("/api/orders", "/orders", null, request -> new ApiResponse(200, Map.of(), "")),
                         new GatewayRoute("/api/orders", "/other", null, request -> new ApiResponse(200, Map.of(), "")))))
                 .getMessage().contains("Duplicate"));
+        assertThrows(IllegalArgumentException.class, () -> new ApiRequest(
+                "GET", "/", Map.of("X-Api-Key", "first", "x-api-key", "second"), ""));
     }
 }

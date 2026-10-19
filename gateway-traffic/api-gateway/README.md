@@ -2,8 +2,9 @@
 
 The gateway is a narrow edge that selects the most specific configured route,
 checks route credentials, forwards to a backend path, and adds a request
-correlation ID. It removes the client API key before forwarding and converts
-known backend-unavailable failures into `502 Bad Gateway`.
+correlation ID. It removes the client API key, client-supplied correlation ID,
+hop-by-hop headers, and untrusted forwarding metadata before forwarding; it
+converts known backend-unavailable failures into `502 Bad Gateway`.
 
 ```mermaid
 flowchart LR

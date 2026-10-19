@@ -28,6 +28,9 @@ public final class CursorCodec {
     }
 
     public Position decode(String cursor) {
+        if (cursor == null || cursor.length() > 512) {
+            throw new InvalidCursorException("Cursor is missing or too large");
+        }
         try {
             String[] parts = cursor.split("\\.", -1);
             if (parts.length != 2) {
