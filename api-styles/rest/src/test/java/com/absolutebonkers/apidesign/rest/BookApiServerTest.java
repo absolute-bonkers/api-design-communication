@@ -64,6 +64,9 @@ class BookApiServerTest {
         HttpRequest explicitlyExcludingJson = HttpRequest.newBuilder(server.baseUri())
                 .header("Accept", "application/json;q=0").GET().build();
         assertEquals(406, client.send(explicitlyExcludingJson, HttpResponse.BodyHandlers.ofString()).statusCode());
+        HttpRequest exclusionMustOverrideWildcard = HttpRequest.newBuilder(server.baseUri())
+                .header("Accept", "application/json;q=0, */*;q=1").GET().build();
+        assertEquals(406, client.send(exclusionMustOverrideWildcard, HttpResponse.BodyHandlers.ofString()).statusCode());
 
         HttpResponse<String> large = send("POST", server.baseUri(), " ".repeat(16_385), "application/json");
         assertEquals(413, large.statusCode());

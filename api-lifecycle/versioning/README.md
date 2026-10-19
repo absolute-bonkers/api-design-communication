@@ -29,3 +29,9 @@ Examples: [`ApiVersionNegotiator`](src/main/java/com/absolutebonkers/apidesign/v
 Tests: [`ApiVersionNegotiatorTest`](src/test/java/com/absolutebonkers/apidesign/versioning/ApiVersionNegotiatorTest.java).
 
 Run with `./gradlew :api-lifecycle:versioning:test`.
+
+## Sources
+
+[HTTP content negotiation (RFC 9110)](https://www.rfc-editor.org/rfc/rfc9110.html#section-12),
+[Deprecation header (RFC 9745)](https://www.rfc-editor.org/rfc/rfc9745.html),
+[Sunset header (RFC 8594)](https://www.rfc-editor.org/rfc/rfc8594.html).

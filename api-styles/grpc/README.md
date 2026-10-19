@@ -25,3 +25,8 @@ Tests: [`BookServiceTest`](src/test/java/com/absolutebonkers/apidesign/grpc/Book
 
 Run with `./gradlew :api-styles:grpc:test`; the task generates Java sources
 from the checked-in Protocol Buffers contract.
+
+## Sources
+
+[gRPC core concepts](https://grpc.io/docs/what-is-grpc/core-concepts/),
+[Protocol Buffers proto3 language guide](https://protobuf.dev/programming-guides/proto3/).

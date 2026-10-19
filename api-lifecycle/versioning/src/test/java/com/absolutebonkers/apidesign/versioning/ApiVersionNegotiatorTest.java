@@ -17,7 +17,7 @@ class ApiVersionNegotiatorTest {
 
     @Test
     void marksDeprecatedVersionsAndLeavesCurrentVersionsUnmarked() {
-        assertEquals("true", negotiator.responseHeaders(ApiVersion.V1).get("Deprecation"));
+        assertEquals("@1735689600", negotiator.responseHeaders(ApiVersion.V1).get("Deprecation"));
         assertEquals("Fri, 01 Jan 2027 00:00:00 GMT",
                 negotiator.responseHeaders(ApiVersion.V1).get("Sunset"));
         assertEquals("</api/v2/orders>; rel=\"successor-version\"",

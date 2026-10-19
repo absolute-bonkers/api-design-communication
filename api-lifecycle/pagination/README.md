@@ -33,3 +33,8 @@ Examples: [`OffsetPager`](src/main/java/com/absolutebonkers/apidesign/pagination
 Tests: [`CatalogPagerTest`](src/test/java/com/absolutebonkers/apidesign/pagination/CatalogPagerTest.java).
 
 Run with `./gradlew :api-lifecycle:pagination:test`.
+
+## Sources
+
+[Google AIP-158: Pagination](https://google.aip.dev/158) describes page-size,
+continuation-token, and stable-request-parameter expectations for paginated APIs.

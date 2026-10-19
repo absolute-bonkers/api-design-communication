@@ -22,3 +22,8 @@ Example: [`OrderRepresentation`](src/main/java/com/absolutebonkers/apidesign/hat
 Tests: [`OrderRepresentationTest`](src/test/java/com/absolutebonkers/apidesign/hateoas/OrderRepresentationTest.java).
 
 Run with `./gradlew :api-lifecycle:hateoas:test`.
+
+## Sources
+
+[Roy Fielding's REST architectural style](https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+describes hypermedia as part of REST's uniform interface.

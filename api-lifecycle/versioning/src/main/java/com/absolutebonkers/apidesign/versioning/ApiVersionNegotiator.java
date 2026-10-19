@@ -15,6 +15,7 @@ public final class ApiVersionNegotiator {
     private static final Pattern VENDOR_TYPE = Pattern.compile(
             "^application/vnd\\.absolute-bonkers\\.orders\\.v([0-9]+)\\+json$",
             Pattern.CASE_INSENSITIVE);
+    private static final Instant V1_DEPRECATED = Instant.parse("2025-01-01T00:00:00Z");
     private static final Instant V1_SUNSET = Instant.parse("2027-01-01T00:00:00Z");
     private static final DateTimeFormatter HTTP_DATE =
             DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US).withZone(ZoneOffset.UTC);
@@ -65,7 +66,7 @@ public final class ApiVersionNegotiator {
             return Map.of();
         }
         return Map.of(
-                "Deprecation", "true",
+                "Deprecation", "@" + V1_DEPRECATED.getEpochSecond(),
                 "Sunset", HTTP_DATE.format(V1_SUNSET),
                 "Link", "</api/v2/orders>; rel=\"successor-version\"");
     }

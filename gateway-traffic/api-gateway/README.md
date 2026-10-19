@@ -28,3 +28,8 @@ Examples: [`ApiGateway`](src/main/java/com/absolutebonkers/apidesign/gateway/Api
 Tests: [`ApiGatewayTest`](src/test/java/com/absolutebonkers/apidesign/gateway/ApiGatewayTest.java).
 
 Run with `./gradlew :gateway-traffic:api-gateway:test`.
+
+## Sources
+
+[API Gateway pattern](https://microservices.io/patterns/apigateway.html),
+[HTTP message connection management (RFC 9110, Section 7.6.1)](https://www.rfc-editor.org/rfc/rfc9110.html#section-7.6.1).

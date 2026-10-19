@@ -27,3 +27,8 @@ Example: [`IdempotencyStore`](src/main/java/com/absolutebonkers/apidesign/idempo
 Tests: [`IdempotencyStoreTest`](src/test/java/com/absolutebonkers/apidesign/idempotency/IdempotencyStoreTest.java).
 
 Run with `./gradlew :api-lifecycle:idempotency:test`.
+
+## Sources
+
+[HTTP Idempotency-Key header draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/),
+[Stripe idempotent requests](https://docs.stripe.com/api/idempotent_requests).

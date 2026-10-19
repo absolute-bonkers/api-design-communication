@@ -28,7 +28,8 @@ class ApiGatewayTest {
         ApiResponse response = gateway.handle(new ApiRequest(
                 "GET", "/api/v1/orders/42",
                 Map.of("X-API-KEY", "secret", "X-Request-Id", "client-value",
-                        "Connection", "keep-alive", "Accept", "application/json",
+                        "Connection", "keep-alive, X-Private", "X-Private", "private",
+                        "Accept", "application/json",
                         "X-Forwarded-For", "198.51.100.4"), ""));
 
         assertEquals(200, response.status());
@@ -36,11 +37,27 @@ class ApiGatewayTest {
         assertEquals("application/json", forwarded.get().header("Accept"));
         assertNull(forwarded.get().header("X-Api-Key"));
         assertNull(forwarded.get().header("Connection"));
+        assertNull(forwarded.get().header("X-Private"));
         assertNull(forwarded.get().header("X-Forwarded-For"));
         assertNotNull(forwarded.get().header("X-Request-Id"));
         assertNotNull(response.headers().get("X-Request-Id"));
         assertFalse(response.headers().containsKey("Connection"));
         assertFalse("client-value".equals(response.headers().get("X-Request-Id")));
+    }
+
+    @Test
+    void removesResponseHeadersNominatedByConnection() {
+        var gateway = new ApiGateway(List.of(new GatewayRoute(
+                "/api", "/backend", null,
+                request -> new ApiResponse(200,
+                        Map.of("Connection", "X-Backend-Only", "X-Backend-Only", "private"), "ok"))));
+
+        ApiResponse response = gateway.handle(new ApiRequest("GET", "/api",
+                Map.of(), ""));
+
+        assertEquals(200, response.status());
+        assertFalse(response.headers().containsKey("Connection"));
+        assertFalse(response.headers().containsKey("X-Backend-Only"));
     }
 
     @Test

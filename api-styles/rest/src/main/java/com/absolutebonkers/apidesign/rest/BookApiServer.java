@@ -7,7 +7,6 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -133,30 +132,44 @@ public final class BookApiServer implements AutoCloseable {
         if (accept == null || accept.isBlank()) {
             return true;
         }
-        return List.of(accept.split(",")).stream()
-                .map(value -> value.split(";", 2))
-                .anyMatch(parts -> (parts[0].trim().equalsIgnoreCase("application/json")
-                                || parts[0].trim().equalsIgnoreCase("application/*")
-                                || parts[0].trim().equals("*/*"))
-                        && qualityIsPositive(parts));
+        int specificity = -1;
+        double quality = 0;
+        for (String range : accept.split(",")) {
+            String[] parts = range.split(";", 2);
+            String mediaType = parts[0].trim();
+            int candidateSpecificity = mediaType.equalsIgnoreCase("application/json") ? 2
+                    : mediaType.equalsIgnoreCase("application/*") ? 1
+                    : mediaType.equals("*/*") ? 0 : -1;
+            if (candidateSpecificity < 0) {
+                continue;
+            }
+            double candidateQuality = quality(parts);
+            if (candidateSpecificity > specificity) {
+                specificity = candidateSpecificity;
+                quality = candidateQuality;
+            } else if (candidateSpecificity == specificity) {
+                quality = Math.max(quality, candidateQuality);
+            }
+        }
+        return specificity >= 0 && quality > 0;
     }
 
-    private static boolean qualityIsPositive(String[] parts) {
+    private static double quality(String[] parts) {
         if (parts.length == 1) {
-            return true;
+            return 1;
         }
         for (String parameter : parts[1].split(";")) {
             String[] pair = parameter.trim().split("=", 2);
             if (pair.length == 2 && pair[0].equalsIgnoreCase("q")) {
                 try {
                     double quality = Double.parseDouble(pair[1]);
-                    return quality > 0 && quality <= 1;
+                    return Double.isFinite(quality) && quality >= 0 && quality <= 1 ? quality : 0;
                 } catch (NumberFormatException exception) {
-                    return false;
+                    return 0;
                 }
             }
         }
-        return true;
+        return 1;
     }
 
     private static boolean isJsonContentType(String contentType) {

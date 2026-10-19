@@ -33,3 +33,8 @@ Examples: [`BookApiServer`](src/main/java/com/absolutebonkers/apidesign/rest/Boo
 Tests: [`BookApiServerTest`](src/test/java/com/absolutebonkers/apidesign/rest/BookApiServerTest.java).
 
 Run with `./gradlew :api-styles:rest:test`.
+
+## Sources
+
+[HTTP Semantics (RFC 9110)](https://www.rfc-editor.org/rfc/rfc9110.html),
+[Roy Fielding's REST architectural style](https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm).

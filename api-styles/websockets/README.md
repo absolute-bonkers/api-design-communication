@@ -25,3 +25,7 @@ Implementation: [`EchoWebSocketServer`](src/main/java/com/absolutebonkers/apides
 Integration test: [`EchoWebSocketServerTest`](src/test/java/com/absolutebonkers/apidesign/websockets/EchoWebSocketServerTest.java).
 
 Run with `./gradlew :api-styles:websockets:test`.
+
+## Sources
+
+[The WebSocket Protocol (RFC 6455)](https://www.rfc-editor.org/rfc/rfc6455.html).

@@ -47,11 +47,12 @@ public final class ApiGateway {
             return new ApiResponse(401, Map.of("X-Request-Id", requestId), "Unauthorized");
         }
 
+        Set<String> requestHopByHopHeaders = hopByHopHeaders(request.headers());
         var forwardedHeaders = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         request.headers().forEach((name, value) -> {
             String normalized = name.toLowerCase(java.util.Locale.ROOT);
             if (!normalized.equals("x-api-key") && !normalized.equals("x-request-id")
-                    && !HOP_BY_HOP_HEADERS.contains(normalized)
+                    && !requestHopByHopHeaders.contains(normalized)
                     && !UNTRUSTED_FORWARDING_HEADERS.contains(normalized)) {
                 forwardedHeaders.put(name, value);
             }
@@ -63,9 +64,10 @@ public final class ApiGateway {
                 request.method(), backendPath, forwardedHeaders, request.body());
         try {
             ApiResponse response = route.backend().forward(forwarded);
+            Set<String> responseHopByHopHeaders = hopByHopHeaders(response.headers());
             var headers = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
             response.headers().forEach((name, value) -> {
-                if (!HOP_BY_HOP_HEADERS.contains(name.toLowerCase(java.util.Locale.ROOT))) {
+                if (!responseHopByHopHeaders.contains(name.toLowerCase(java.util.Locale.ROOT))) {
                     headers.put(name, value);
                 }
             });
@@ -76,6 +78,20 @@ public final class ApiGateway {
                     .log(System.Logger.Level.ERROR, "API gateway backend request failed", exception);
             return new ApiResponse(502, Map.of("X-Request-Id", requestId), "Backend unavailable");
         }
+    }
+
+    private static Set<String> hopByHopHeaders(Map<String, String> headers) {
+        var hopByHop = new java.util.HashSet<>(HOP_BY_HOP_HEADERS);
+        headers.forEach((name, value) -> {
+            if (name.equalsIgnoreCase("Connection")) {
+                for (String nominated : value.split(",")) {
+                    if (!nominated.isBlank()) {
+                        hopByHop.add(nominated.trim().toLowerCase(java.util.Locale.ROOT));
+                    }
+                }
+            }
+        });
+        return hopByHop;
     }
 
     private static boolean isSafePath(String path) {

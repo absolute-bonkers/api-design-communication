@@ -26,3 +26,9 @@ Examples: [`BookGraphQl`](src/main/java/com/absolutebonkers/apidesign/graphql/Bo
 Tests: [`BookGraphQlTest`](src/test/java/com/absolutebonkers/apidesign/graphql/BookGraphQlTest.java).
 
 Run with `./gradlew :api-styles:graphql:test`.
+
+## Sources
+
+[GraphQL specification](https://spec.graphql.org/October2021/), including its
+[type system](https://spec.graphql.org/October2021/#sec-Type-System) and
+[validation rules](https://spec.graphql.org/October2021/#sec-Validation).
